@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>AgencyMetrics SaaS</title>
+
+<link rel="stylesheet" href="/static/style.css">
+
+<script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&vault=true&intent=subscription"></script>
+
+</head>
+
+<body>
+
+<h1>AgencyMetrics</h1>
+
+<div class="plan">
+<h2>PRO - 79€/month</h2>
+<div id="paypal-button-container-PRO"></div>
+</div>
+
+<div class="plan">
+<h2>SCALE - 140£/month</h2>
+<div id="paypal-button-container-SCALE"></div>
+</div>
+
+<script>
+
+const plans = {
+
+PRO: "{{ plan_pro_id }}",
+SCALE: "{{ plan_scale_id }}"
+
+}
+
+for (const [name, planId] of Object.entries(plans)) {
+
+paypal.Buttons({
+
+createSubscription: function(data, actions) {
+
+return actions.subscription.create({
+
+plan_id: planId
+
+})
+
+},
+
+onApprove: function(data) {
+
+alert("Subscription successful: " + data.subscriptionID)
+
+}
+
+}).render(`#paypal-button-container-${name}`)
+
+}
+
+</script>
+
+<hr>
+
+<h2>Add Item</h2>
+
+<form action="/add_item" method="POST">
+
+<input type="text" name="name" required>
+
+<button type="submit">Add</button>
+
+</form>
+
+<ul>
+
+{% for item in items %}
+
+<li>{{ item }}</li>
+
+{% endfor %}
+
+</ul>
+
+</body>
+</html>
