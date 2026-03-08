@@ -2,12 +2,15 @@ from flask import Flask, request, jsonify, render_template, redirect, url_for
 
 app = Flask(__name__)
 
+# Credenciais e IDs dos planos
 PAYPAL_CLIENT_ID = "AS1J_fjGJDoc-hJWyMz5nfqfG-5XvKk3_w_jwARLltFePEogQmCvn68kxAoDMKr6ei8Cp2GJrwjr41lc"
 PLAN_PRO_ID = "P-900473855S945552PNGU4B7Q"
 PLAN_SCALE_ID = "P-096371535E2645918NGVQGKI"
 
+# Itens do dashboard em memória
 items = []
 
+# Página inicial
 @app.route("/")
 def index():
     return render_template(
@@ -18,6 +21,7 @@ def index():
         plan_scale_id=PLAN_SCALE_ID
     )
 
+# Adicionar item no dashboard
 @app.route("/add_item", methods=["POST"])
 def add_item():
     name = request.form.get("name")
@@ -25,6 +29,7 @@ def add_item():
         items.append(name)
     return redirect(url_for("index"))
 
+# Webhook do PayPal
 @app.route("/paypal-webhook", methods=["POST"])
 def paypal_webhook():
     data = request.json
@@ -41,6 +46,9 @@ def paypal_webhook():
 
     return jsonify({"status": "ok"}), 200
 
-
+# Início da aplicação
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    import os
+    # Usa a porta do Railway se existir, senão localmente 5000
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
